@@ -1,7 +1,7 @@
+const { index } = require("../controllers/userController");
+
 const indexRouter = async (req, res) => {
-  res.json({
-    msg: "Hello from index router",
-  });
+  res.json(await index());
 };
 
 module.exports = {

@@ -1,2 +1,3 @@
 # Arduino_Express_React
-Home Automation
+
+A full stack application for user Home Automation

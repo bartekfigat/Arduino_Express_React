@@ -1,6 +1,5 @@
 const express = require("express");
 const helmet = require("helmet");
-const bodyParser = require("body-parser");
 const cors = require("cors");
 const morgan = require("morgan");
 const Port = process.env.PORT || 8080;
@@ -19,22 +18,24 @@ db.dbConnection();
 const { notFound, errorHandler } = require("./middleware/index");
 
 // set public assets directory
-app.use(express.static("public"));
+server.use(express.static("public"));
 
 //Middleware
-server.use(express.urlencoded({ extended: false }));
+server.use(express.urlencoded({ extended: true }));
 server.use(express.json());
 server.use(morgan("tiny"));
 server.use(
   cors({
-    credentials: true,
     origin: "http://localhost:3000",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true,
+    optionsSuccessStatus: 200,
   })
 );
 server.use(helmet());
 
 // Mount Routes
-server.use(indexRouter);
+server.use("/api/user", indexRouter);
 
 //Errors Handlers
 server.use(notFound);

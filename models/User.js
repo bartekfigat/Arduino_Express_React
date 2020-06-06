@@ -4,6 +4,7 @@ const { Schema } = mongoose;
 
 const User = new Schema(
   {
+    created: { type: Date },
     userName: { type: String },
     userEmail: { type: String, required: true, unique: true, trim: true },
     userPassword: { type: String, required: true },
@@ -11,7 +12,13 @@ const User = new Schema(
     isAuthenticated: { type: Boolean, required: true, default: false },
     resetPasswordToken: String,
     resetPasswordExpires: Date,
-    modelID: { type: String, required: true },
+    lighting: [
+      {
+        switch: { type: String },
+        state: { type: String, default: "false" },
+      },
+    ],
+    modelID: { type: String, required: true, default: false },
     posts: [
       {
         type: mongoose.Schema.Types.ObjectId,
