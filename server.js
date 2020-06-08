@@ -4,9 +4,6 @@ const cors = require("cors");
 const morgan = require("morgan");
 const Port = process.env.PORT || 8080;
 
-//@Rotues Require
-const indexRouter = require("./routes/api/index");
-
 //Server
 const server = express();
 
@@ -14,24 +11,23 @@ const server = express();
 const db = require("./config/index");
 db.dbConnection();
 
+//@Rotues Require
+const indexRouter = require("./routes/api/index");
 //Middleware functions
 const { notFound, errorHandler } = require("./middleware/index");
 
 // set public assets directory
 server.use(express.static("public"));
-
+server.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
 //Middleware
 server.use(express.urlencoded({ extended: true }));
 server.use(express.json());
 server.use(morgan("tiny"));
-server.use(
-  cors({
-    origin: "http://localhost:3000",
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    credentials: true,
-    optionsSuccessStatus: 200,
-  })
-);
 server.use(helmet());
 
 // Mount Routes

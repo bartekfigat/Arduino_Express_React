@@ -19,6 +19,15 @@ const show = async (id) => {
   }
 };
 
+const createUserModel = async (user = new User()) => {
+  if (!(user instanceof User)) return Error("User object required.");
+  try {
+    const user = await User.create(user);
+    return user;
+  } catch (error) {
+    console.log(`error  : ${error}`);
+  }
+};
 const create = async (user = new User()) => {
   if (!(user instanceof User)) return Error("User object required.");
   try {
@@ -52,4 +61,5 @@ module.exports = {
   create,
   update,
   destroy,
+  createUserModel,
 };

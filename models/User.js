@@ -18,7 +18,7 @@ const User = new Schema(
         state: { type: String, default: "false" },
       },
     ],
-    modelID: { type: String, required: true, default: false },
+    modelID: { type: String },
     posts: [
       {
         type: mongoose.Schema.Types.ObjectId,

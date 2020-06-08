@@ -1,22 +1,19 @@
 const { Router } = require("express");
 const router = Router();
-const { validRegister } = require("../../middleware/inputValidation");
-const {
-  userRegister,
-  createUserModel,
-} = require("../../middleware/userRegister");
 const { validationResult } = require("express-validator");
+const { validRegister } = require("../../middleware/inputValidation");
+const { userRegister } = require("../../middleware/userRegister");
+const { create } = require("../../controllers/userController");
 const { update } = require("../../controllers/userController");
 const {
   sendEmailVerification,
   updateAccoutnAfterEmailConfirmation,
 } = require("../../controllers/sedGridController");
-
+const User = require("../../models/User");
 //Controllers
 const { indexRouter } = require("../../controllers/index");
 
 /* ======== GET index ======== */
-router.get("/", indexRouter);
 
 /* ======== POST  userRegister ======== */
 router.post(
@@ -24,28 +21,37 @@ router.post(
   validRegister,
   userRegister,
   async (req, res, next) => {
-    try {
-      const userResult = await createUserModel(req.user);
-      const sendEmail = await sendEmailVerification(req.user);
+    const { email } = req.body;
+    const emailValid = await User.findOne({ userEmail: email });
 
-      console.log(userResult);
+    if (emailValid) {
+      res.status(400).json({ error: "Something went wrong" });
+    } else {
+      try {
+        const userResult = await create(req.user);
+        const sendEmail = await sendEmailVerification(req.user);
 
-      res.json({
-        userResult,
-        sendEmail,
-      });
-    } catch (error) {
-      res
-        .status(500)
-        .json({ error: "You have entered an invalid email or password" });
+        console.log(`userResult  :${userResult}`);
+
+        res.json({
+          userResult,
+          sendEmail,
+        });
+      } catch {
+        console.log(error);
+        res
+          .status(500)
+          .json({ error: "You have entered an invalid email or password" });
+      }
     }
   }
 );
 /* ======== Get activate  ======== */
 
 router.get("/activate/:token", async (req, res) => {
+  const { token } = req.param;
   try {
-    const registerResult = await update(req.params.token);
+    const registerResult = await updateAccoutnAfterEmailConfirmation(token);
     res.json(registerResult);
   } catch (err) {
     res.status(400).json({

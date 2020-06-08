@@ -3,9 +3,9 @@ const sgMail = require("@sendgrid/mail");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
-const { SENDGRID_API_KEY, secret } = process.env;
+const { secret } = process.env;
 
-sgMail.setApiKey(SENDGRID_API_KEY);
+sgMail.setApiKey(process.env.sengrind_api_key);
 
 const sendEmailVerification = async (user = new User()) => {
   if (!(user instanceof User)) return Error("User object required.");
@@ -18,7 +18,7 @@ const sendEmailVerification = async (user = new User()) => {
     text: " Node.js",
     html: `Hello.
 		Thank you for registering at localhost Please click the link below to complete yor activation
-		<a href='http://localhost:8080/activate/${authToken}'>activate link</a>`,
+		<a href='http://localhost:3000/activate/${authToken}'>activate link</a>`,
   };
 
   try {
@@ -29,14 +29,14 @@ const sendEmailVerification = async (user = new User()) => {
     });
     return status;
   } catch (error) {
-    throw Error(error);
+    console.log(error);
   }
 };
 
 const updateAccoutnAfterEmailConfirmation = async (token = "") => {
   try {
     const user = await User.findOne({ authToken: token });
-    const decoded = jwt.verify(token, secret);
+    const decoded = jwt.verify(token, `${secret}`);
 
     if (decoded) {
       console.log(`Decoded  : ${decoded}`);
