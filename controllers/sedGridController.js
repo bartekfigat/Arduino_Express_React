@@ -36,28 +36,26 @@ const sendEmailVerification = async (user = new User()) => {
 const updateAccoutnAfterEmailConfirmation = async (token = "") => {
   try {
     const user = await User.findOne({ authToken: token });
-    const decoded = jwt.verify(token, `${secret}`);
+    console.log(user);
+    const decoded = jwt.verify(token, secret);
 
-    if (decoded) {
-      console.log(`Decoded  : ${decoded}`);
-      const msg = {
-        to: `${user.userEmail}`,
-        from: "test@test.com",
-        subject: `Hello Account Activated.`,
-        text: " Node.js",
-        html: `Your account has benn successfully activated`,
-      };
-      sgMail.send(msg);
+    const msg = {
+      to: `${user.userEmail}`,
+      from: "test@test.com",
+      subject: `Hello Account Activated.`,
+      text: " Node.js",
+      html: `Your account has benn successfully activated`,
+    };
+    sgMail.send(msg);
 
-      return await user.updateOne({
-        authToken: null,
-        isAuthenticated: true,
-      });
-    } else {
-      console.log(`not decoded  : ${decoded}`);
-    }
+    const userUpdate = await user.updateOne({
+      authToken: null,
+      isAuthenticated: true,
+    });
+
+    return userUpdate;
   } catch (error) {
-    throw Error(error);
+    console.log(error);
   }
 };
 
